@@ -7,6 +7,7 @@ execute:
 
 ```{r}
 #| message: false
+#| warning: false
 
 library(tidyverse)      
 library(gt)             
@@ -31,6 +32,27 @@ x <- read_csv("https://raw.githubusercontent.com/PPBDS/bootcamp/refs/heads/maste
       select(g4math, kind, race, yearssmall)          
 ```
 
+```{r}
+# Load required libraries
+library(ggplot2)
+
+# Plot
+x |> 
+  ggplot(aes(x = kind, y = g4math, fill = race)) +
+  geom_boxplot(alpha = 0.7, position = position_dodge(width = 0.8)) +
+  labs(
+    title = "4th Grade Math Scores by Class Type and Race",
+    x = "Class Type",
+    y = "Math Score",
+    fill = "Race"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    legend.position = "right"
+  )
+
+```
 ## Background Information
 
 The Tennessee STAR dataset comes from a large-scale, multi-year educational experiment conducted in the 1980s across dozens of Tennessee schools. In the study, over 6,000 kindergarten through third-grade students were randomly assigned to either small classes (13–17 students), regular-sized classes (22–25 students), or regular-sized classes with a teacher’s aide. The goal was to determine whether smaller class sizes improved academic performance, particularly in mathematics and reading. Academic outcomes were measured using standardized and curriculum-based tests, and the dataset also includes key student and classroom characteristics such as race, sex, school, and class assignment. 
@@ -47,7 +69,7 @@ The Tennessee STAR dataset comes from a large-scale, multi-year educational expe
 * Explore the data. What is the outcome variable? How it is distributed?
 
 ```{r}
-x
+summary(x)
 ```
 
 ### Preceptor Table
@@ -56,10 +78,28 @@ What sorts of questions are we trying to answer?
 
 In order to build the Preceptor Table, we need to answer some questions: Is the model causal or predictive? What are units? What are the outcomes? What are the covariates? What are the treatments?
 
+question : Which combination of student characteristics (e.g., class size, race, years in small class, school) best predicts future academic success in math?
+
+Preceptor table:
+
+1. predictive model
+2. units: students
+3. outcome: grade/test_scores
+4. covariates:race/yearssmall
+5. treatments : class size/ kind
 
 ### Population Table 
 
 Describe in words the Population Table. For each of the four key assumption of Justice --- validity, stability, representativeness, and unconfoundedness --- provide a counter-example, if relevant. Describe the mathematical Structure of the model.
+
+1. validity: how students class size acurately reflects the maths school ?
+2.stability: Would the effect of class size on math performance remain stable across different contexts or over time?
+3.Are the students in the STAR study representative of the population we want to generalize to?
+(The results from the Tennessee STAR dataset may not be fully generalizable to a Chicago school context because of differences in student demographics, socioeconomic conditions, urban school environments, and possibly curriculum standards.)
+4.Unconfoundedness means that, apart from the treatment (class size), there are no unmeasured variables that simultaneously affect both treatment assignment and the outcome (math performance).
+$$
+\mathbb{E}[\text{g4math}_i] = \beta_0 + \beta_1 \cdot \text{race}_i + \beta_2 \cdot \text{yearssmall}_i + \beta_3 \cdot \text{school}_i + \ldots
+$$
 
 
 ## More Information
